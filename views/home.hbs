@@ -6,7 +6,8 @@
 {{> content}}
 {{> chat}}
 {{else}}
-<a href="/user/signin">Sign In</a>
+<a href="https://127.0.0.1:3113/user/signin">Sign In</a>
+{{#if allowed}}
 <a href="/user/signup">Sign Up</a>
-<a href="/auth/google">Sign Up With Google</a>
+{{/if}}
 {{/if}}
