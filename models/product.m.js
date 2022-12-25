@@ -6,7 +6,7 @@ module.exports = {
         return rs;
     },
     allByCatId: async (id) =>{
-        const rs = await pdb.load('SELECT * FROM "Products" WHERE "CatID"=$1',[id]);
+        const rs = await pdb.load('SELECT * FROM "Products" WHERE "CategoryID"=$1',[id]);
         return rs;
     }
 };

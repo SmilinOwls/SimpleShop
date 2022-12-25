@@ -114,6 +114,29 @@ router.post('/signin', async (req, res, next) => {
     res.redirect(`http://127.0.0.1:${process.env.PORT_SHOP}/user/signin/callback?accessToken=${accessToken}&refreshToken=${refreshToken}&expired=${expired}`);
 });
 
+router.get('/refresh',async (req,res,next) => {
+    const refreshTokenFromClient = req.body.refreshToken;
+    if (refreshTokenFromClient) {
+      try {
+        // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded 
+        const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
+        const user = decoded.data;
+        const userChk = await userC.byName(user.Username);
+        if(!userChk[0]) {
+            return res.redirect('/user/refresh');
+        }
+        const accessToken = await jwtHelper.generateToken(user, accessTokenSecret, accessTokenLife);
+        
+      } catch (error) {
+        res.status(403).json({
+          message: 'Invalid refresh token.',
+        });
+      }
+    } 
+
+    res.redirect('/user/refresh')
+});
+
 router.get('/signup', (req, res, next) => {
     res.render('sign-up', { check: false, title: "Sign up" });
 });

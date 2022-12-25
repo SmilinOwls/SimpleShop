@@ -4,20 +4,18 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">TinyDes</th>
-                <th scope="col">Price</th>
-                <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Units In Stock</th>
             </tr>
         </thead>
 
         <tbody>
             {{#each products}}
             <tr>
-                <th scope="row">{{ProID}}</th>
-                <td>{{ProName}}</td>
-                <td>{{TinyDes}}</td>
-                <td>{{Price}}</td>
-                <td>{{Quantity}}</td>
+                <th scope="row">{{ProductID}}</th>
+                <td>{{ProductName}}</td>
+                <td>{{UnitPrice}}</td>
+                <td>{{UnitsInStock}}</td>
             </tr>
             {{/each}}
         </tbody>
