@@ -4,7 +4,6 @@ const path = require('path');
 const reload = require('reload');
 const cookieParser = require('cookie-parser');
 const app = express();
-const passport = require('passport');
 const server = require('http').createServer(app);
 var io = require('socket.io')(server, { cors: { origin: '*', allowCredentials: true } });
 const userR = require('./routers/user.r');
@@ -12,7 +11,6 @@ const categoryR = require('./routers/category.r');
 
 require("dotenv").config();
 const port = process.env.PORT_SHOP;
-
 
 // Static public files
 app.use(express.static(path.join(__dirname, '/public')));
@@ -37,16 +35,10 @@ app.set('views', path.join(__dirname, './views'));
 // Cookies
 app.use(cookieParser());
 
-// Session
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
-// Passport
-require('./routers/passport.r')(app);
-
 app.get('/', (req, res, next) => {
     var chk = false;
-    if (req.isAuthenticated()) chk = true;
-    res.render('home', { check: false, chk: chk, title: "Home" });
+    if (req.cookies.expired) chk = true;
+    res.render('home', { check: false, allowed: false, chk: chk, title: "Home Shop" });
 });
 
 app.use('/user', userR);

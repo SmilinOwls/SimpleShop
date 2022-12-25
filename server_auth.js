@@ -10,6 +10,9 @@ const userR = require('./routers/user.r');
 require("dotenv").config();
 const port = process.env.PORT_AUTH;
 
+// Cookies
+app.use(cookieParser());
+
 // Static public files
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -30,18 +33,9 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, './views'));
 
-// Cookies
-app.use(cookieParser());
-
-// Session
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
-require('./routers/passport.r')(app);
-
 app.get('/', (req, res, next) => {
     var chk = false;
-    if (req.isAuthenticated()) chk = true;
-    res.render('home', { check: false, chk: chk, title: "Home" });
+    res.render('home', { check: false, allowed: true, chk: chk, title: "Home Auth" });
 });
 
 app.use('/user', userR);
