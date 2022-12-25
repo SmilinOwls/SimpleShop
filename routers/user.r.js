@@ -108,34 +108,39 @@ router.post('/signin', async (req, res, next) => {
             const lastUser = { Username: un, Password: pw };
             res.cookie('user', lastUser);
         }
-        res.cookie('expired',expired, { maxAge: expired * 60 * 60 * 1000, httpOnly: true });
+        res.cookie('expired', expired, { maxAge: expired * 60 * 60 * 1000, httpOnly: true });
     });
 
     res.redirect(`http://127.0.0.1:${process.env.PORT_SHOP}/user/signin/callback?accessToken=${accessToken}&refreshToken=${refreshToken}&expired=${expired}`);
 });
 
-router.get('/refresh',async (req,res,next) => {
+router.post('/refresh', async (req, res, next) => {
     const refreshTokenFromClient = req.body.refreshToken;
     if (refreshTokenFromClient) {
-      try {
-        // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded 
-        const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
-        const user = decoded.data;
-        const userChk = await userC.byName(user.Username);
-        if(!userChk[0]) {
-            return res.redirect('/user/refresh');
-        }
-        const accessToken = await jwtHelper.generateToken(user, accessTokenSecret, accessTokenLife);
-        
-      } catch (error) {
-        res.status(403).json({
-          message: 'Invalid refresh token.',
-        });
-      }
-    } 
+        try {
+            // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded 
+            const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
+            const user = decoded.data.user;
+            const userChk = await userC.byName(user.Username);
+            if (!userChk[0]) {
+                res.render('refresh',{check: true});
+            } else {
+                const accessToken = await jwtHelper.generateToken(user, accessTokenSecret, accessTokenLife);
+                console.log(accessToken);
+                res.render('refresh',{check: false, token: accessToken});
+            }
 
-    res.redirect('/user/refresh')
+        } catch (error) {
+            res.render('refresh', { check: true });
+        }
+    } else {
+        res.render('refresh', { check: true });
+    }
 });
+
+router.get('/refresh', async (req, res, next) => {
+    res.render('refresh', { check: false });
+})
 
 router.get('/signup', (req, res, next) => {
     res.render('sign-up', { check: false, title: "Sign up" });
@@ -150,7 +155,7 @@ router.get('/signin', (req, res, next) => {
 
 router.use('/signin/callback', (req, res, next) => {
     console.log(req.query);
-    res.cookie('expired',req.query.expired);
+    res.cookie('expired', req.query.expired);
     res.redirect('/');
 });
 

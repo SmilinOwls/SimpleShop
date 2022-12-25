@@ -1,0 +1,29 @@
+<form action="/user/refresh" method="POST">
+    <!-- Refresh token input -->
+    <div class="form-outline mb-4">
+        <label class="form-label" for="form2Example1">Refresh token</label>
+        <input type="text" name="refreshToken" placeholder="Input your request token" id="form2Example1" required
+            class="form-control" />
+    </div>
+    {{#if check}}
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-center">
+            <p style="color: red;">Refresh token is not valid!</p>
+        </div>
+    </div>
+    {{else}}
+    <div class="row mb-4">
+        <div class="col d-flex">
+            New Access Token: <br/>
+            <div class="text">
+                {{token}}
+            </div>
+            
+        </div>
+    </div>
+    {{/if}}
+    <div class="row mb-4 d-flex justify-content-center">
+        <!-- Submit button -->
+        <button type="submit" style="width: auto" class="btn btn-primary btn-block mb-4">Authorize</button>
+    </div>
+</form>
