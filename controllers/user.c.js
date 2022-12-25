@@ -36,5 +36,13 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
+    },
+    update: async (u) =>{
+        try {
+            const user = await userM.update(u);
+            return user;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

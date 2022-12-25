@@ -20,4 +20,9 @@ module.exports = {
         const rs = await pdb.load('SELECT * FROM "Users" WHERE "Username" = $1',[username]); 
         return rs;
     },
+
+    update: async (u) => {
+        const rs = await pdb.load('UPDATE "Users" SET "Token" = $1 WHERE "UserID" = $2',[u.Token, u.UserID]); 
+        return rs;
+    }
 };

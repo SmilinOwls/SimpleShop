@@ -19,9 +19,12 @@
         </li>
         {{else}}
 
+        {{#if allowed}}
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="/user/signup">Sign-up</a>
         </li>
+        {{/if}}
+        
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="/user/signin">Sign-in</a>
         </li>

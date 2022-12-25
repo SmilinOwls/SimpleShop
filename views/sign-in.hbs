@@ -1,15 +1,26 @@
 <form action="/user/signin" method="POST">
   <!-- Usernam input -->
   <div class="form-outline mb-4">
-    <input type="text" name="Username" value="{{lastUser.f_Username}}" id="form2Example1" class="form-control" />
+    <input type="text" name="Username" value="{{lastUser.Username}}" id="form2Example1" class="form-control" />
     <label class="form-label" for="form2Example1">Username</label>
   </div>
 
   <!-- Password input -->
   <div class="form-outline mb-4">
-    <input type="password" name="Password" value="{{lastUser.f_Password}}" id="form2Example2" class="form-control" />
+    <input type="password" name="Password" value="{{lastUser.Password}}" id="form2Example2" class="form-control" />
     <label class="form-label" for="form2Example2">Password</label>
   </div>
+
+  <!-- Time input -->
+  <div class="form-outline mb-4">
+    <label class="form-label" for="form2Example2">Select expired time (hour) in: </label>
+    <select name="expired" class="form-select" aria-label="Default select example">
+      {{#each expire}}
+      <option value="{{this}}">{{this}} h</option>
+      {{/each}}
+    </select>
+  </div>
+
 
   {{#if check}}
   <div class="row mb-4">
@@ -18,7 +29,7 @@
     </div>
   </div>
   {{/if}}
-  
+
   <!-- 2 column grid layout for inline styling -->
   <div class="row mb-4">
     <div class="col d-flex justify-content-center">
@@ -31,7 +42,7 @@
   </div>
 
   <div class="row mb-4 d-flex justify-content-center">
-     <!-- Submit button -->
+    <!-- Submit button -->
     <button type="submit" style="width: 80px" class="btn btn-primary btn-block mb-4">Sign in</button>
   </div>
 
@@ -40,21 +51,5 @@
   <div class="text-center">
     <p>Not a member? <a href="/user/signup">Register</a></p>
     <p>or sign up with:</p>
-    <button type="button" class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-facebook-f"></i>
-    </button>
-
-    <button type="button" class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-google"></i>
-      <a href="/auth/google"></a>
-    </button>
-
-    <button type="button" class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-twitter"></i>
-    </button>
-
-    <button type="button" class="btn btn-link btn-floating mx-1">
-      <i class="fab fa-github"></i>
-    </button>
   </div>
 </form>

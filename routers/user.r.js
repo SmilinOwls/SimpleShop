@@ -2,9 +2,18 @@ const express = require('express');
 const router = express.Router();
 const userC = require('../controllers/user.c');
 const bycrypt = require('bcrypt');
-const passport = require('passport');
+const jwtHelper = require("../helpers/jwt.helper");
 
 const saltOrRounds = 10;
+
+// Thời gian sống của token
+const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "1h";
+// Mã secretKey này phải được bảo mật tuyệt đối, các bạn có thể lưu vào biến môi trường hoặc file
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "ACCESS_TOKEN_SECRET";
+// Thời gian sống của refreshToken
+const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE || "3650d";
+// Mã secretKey này phải được bảo mật tuyệt đối, các bạn có thể lưu vào biến môi trường hoặc file
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || "REFRESH_TOKEN_SECRET";
 
 router.post('/checkUsername', async (req, res, next) => {
     const un = req.body.Username;
@@ -42,9 +51,9 @@ router.post('/signup', async (req, res, next) => {
                     const user = {
                         UserID: id + 1,
                         Username: un,
-                        Password: hash.slice(0, 50),
+                        Password: hash,
                         FullName: req.body.FullName,
-                        Token: hash.substring(50),
+                        Token: '',
                         Address: req.body.Address
                     }
 
@@ -60,7 +69,7 @@ router.post('/signup', async (req, res, next) => {
     }
 });
 
-router.post('/signin', passport.authenticate('local'), async (req, res, next) => {
+router.post('/signin', async (req, res, next) => {
     // const un = req.body.Username, pw = req.body.Password;
     // const uDb = await userC.byName(un);
     // if(uDb.length == 0){
@@ -75,18 +84,34 @@ router.post('/signin', passport.authenticate('local'), async (req, res, next) =>
     //         res.render('sign-in',{check: true,title: "Sign in"});
     //     }
     // }
+    const un = req.body.Username, pw = req.body.Password;
+    const expired = parseInt(req.body.expired);
+    const expire = Array.from({ length: 24 }, (_, i) => i + 1);
 
+    const user = await userC.byName(un);
+    if (!user[0]) {
+        return res.render('sign-in', { check: true, expire: expire, title: "Sign in" });
+    }
 
-    if (req.isAuthenticated()) {
+    console.log(user[0]);
+    const cmp = await bycrypt.compare(pw, user[0].Password);
+    if (!cmp) {
+        return res.render('sign-in', { check: true, expire: expire, title: "Sign in" });
+    }
+
+    const accessToken = await jwtHelper.generateToken(user[0], accessTokenSecret, expired);
+    const refreshToken = await jwtHelper.generateToken(user[0], refreshTokenSecret, refreshTokenLife);
+
+    user[0].Token = refreshToken;
+    userC.update(user[0]).then(data => {
         if (req.body.Remember) {
-            const un = req.body.Username, pw = req.body.Password;
-            const lastUser = { f_Username: un, f_Password: pw };
+            const lastUser = { Username: un, Password: pw };
             res.cookie('user', lastUser);
         }
-        res.redirect('/category');
-    } else {
-        res.render('sign-in', { check: true, title: "Sign in" });
-    }
+        res.cookie('expired',expired, { maxAge: expired * 60 * 60 * 1000, httpOnly: true });
+    });
+
+    res.redirect(`http://127.0.0.1:${process.env.PORT_SHOP}/user/signin/callback?accessToken=${accessToken}&refreshToken=${refreshToken}&expired=${expired}`);
 });
 
 router.get('/signup', (req, res, next) => {
@@ -96,26 +121,19 @@ router.get('/signup', (req, res, next) => {
 router.get('/signin', (req, res, next) => {
     const lastUser = req.cookies.user;
     res.clearCookie('user');
-    res.render('sign-in', { check: false, lastUser: lastUser, title: "Sign in" });
+    const expire = Array.from({ length: 24 }, (_, i) => i + 1);
+    res.render('sign-in', { check: false, expire: expire, lastUser: lastUser, title: "Sign in" });
+});
+
+router.use('/signin/callback', (req, res, next) => {
+    console.log(req.query);
+    res.cookie('expired',req.query.expired);
+    res.redirect('/');
 });
 
 router.get('/logout', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        req.logout(err => {
-            console.log('userC-logout: ', err);
-            if (err) return next(err);
-        });
-    }
-
-    res.redirect('signin');
-});
-
-router.get('/profile', (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        res.redirect('signin');
-    } else {
-        res.redirect('/', { chk: true });
-    }
+    res.clearCookie("expired");
+    res.redirect('/');
 });
 
 module.exports = router;
