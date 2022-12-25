@@ -1,0 +1,12 @@
+<p>Here is {{title}} Page</p>
+{{#if chk}}
+<a href="/category">Category List</a> <br/>
+<a href="/category/curd">Modify category</a> 
+{{> side}}
+{{> content}}
+{{> chat}}
+{{else}}
+<a href="/user/signin">Sign In</a>
+<a href="/user/signup">Sign Up</a>
+<a href="/auth/google">Sign Up With Google</a>
+{{/if}}

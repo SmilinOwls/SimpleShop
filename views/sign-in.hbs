@@ -1,0 +1,60 @@
+<form action="/user/signin" method="POST">
+  <!-- Usernam input -->
+  <div class="form-outline mb-4">
+    <input type="text" name="Username" value="{{lastUser.f_Username}}" id="form2Example1" class="form-control" />
+    <label class="form-label" for="form2Example1">Username</label>
+  </div>
+
+  <!-- Password input -->
+  <div class="form-outline mb-4">
+    <input type="password" name="Password" value="{{lastUser.f_Password}}" id="form2Example2" class="form-control" />
+    <label class="form-label" for="form2Example2">Password</label>
+  </div>
+
+  {{#if check}}
+  <div class="row mb-4">
+    <div class="col d-flex justify-content-center">
+      <p style="color: red;">Username or password is not valid!</p>
+    </div>
+  </div>
+  {{/if}}
+  
+  <!-- 2 column grid layout for inline styling -->
+  <div class="row mb-4">
+    <div class="col d-flex justify-content-center">
+      <!-- Checkbox -->
+      <div class="form-check">
+        <input class="form-check-input" name="Remember" type="checkbox" id="form2Example31" checked />
+        <label class="form-check-label" for="form2Example31"> Remember me </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 d-flex justify-content-center">
+     <!-- Submit button -->
+    <button type="submit" style="width: 80px" class="btn btn-primary btn-block mb-4">Sign in</button>
+  </div>
+
+
+  <!-- Register buttons -->
+  <div class="text-center">
+    <p>Not a member? <a href="/user/signup">Register</a></p>
+    <p>or sign up with:</p>
+    <button type="button" class="btn btn-link btn-floating mx-1">
+      <i class="fab fa-facebook-f"></i>
+    </button>
+
+    <button type="button" class="btn btn-link btn-floating mx-1">
+      <i class="fab fa-google"></i>
+      <a href="/auth/google"></a>
+    </button>
+
+    <button type="button" class="btn btn-link btn-floating mx-1">
+      <i class="fab fa-twitter"></i>
+    </button>
+
+    <button type="button" class="btn btn-link btn-floating mx-1">
+      <i class="fab fa-github"></i>
+    </button>
+  </div>
+</form>

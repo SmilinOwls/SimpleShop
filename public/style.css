@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#main {
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+#content {
+    border: 1px solid darkgrey;
+    width: 400px;
+    height: 300px;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+#content p {
+    margin: 5px;
+}
+
+#username, #content, #message, #sendMessage {
+    margin-bottom: 5px;
+}
+
+/* .app {
+    height: 100%;
+    width: 80%;
+    margin: 100px auto;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+} */

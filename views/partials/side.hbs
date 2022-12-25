@@ -1,0 +1,7 @@
+<div class="list-group">
+    {{#each categories}}
+    <a href="/category/{{CatID}}/product" class="list-group-item list-group-item-action {{#if isActive}} active {{/if}}" >
+        {{CatName}}
+    </a>
+    {{/each}}
+</div>

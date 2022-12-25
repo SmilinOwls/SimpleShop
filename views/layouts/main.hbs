@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="main">
+        <div class="row py-2">
+            <div class="col-md-12">
+                {{> header}}
+            </div>
+            <div class="row py-2">
+                <div class="col-md-12">
+                    {{{body}}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/reload/reload.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+
+            $('form').submit(function () {
+                if ($('input[type=file]')[0].files[0]) {
+                    uploadFile();
+                } else {
+                    socket.emit('chat message', $('#m').val());
+                    $('#m').val('');
+                }
+                return false;
+            });
+            socket.on('chat message', function (msg) {
+                $('#messages').append($('<li>').text(msg));
+            });
+
+            socket.on("image", function (info) {
+                if (info.buffer) {
+                    $('#messages').append($('<li>').append($('<img>').attr('src', info.buffer)));
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            });
+
+            var uploadFile = function () {
+                var file = $('input[type=file]')[0].files[0];
+                $('input[type=file]').val('')
+                if (file) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function (event) {
+                        socket.emit('image', { image: true, buffer: event.target.result });
+                    }
+                    reader.onerror = function (event) {
+                        console.log('Error reading file: ', event);
+                    }
+                }
+            }
+
+        }
+        );
+    </script>
+
+    {{{_sections.script}}}
+</body>
+
+</html>

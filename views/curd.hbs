@@ -1,0 +1,112 @@
+<div class="card-body">
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+            {{#each categories}}
+            {{#if isEdit}}
+            <tr>
+                <th scope="row"><input type="text" name="catID" id="catID" value="{{CatID}}" disabled form="frmHidden"></td>
+                <td><input type="text" name="catName" id="catName" value="{{CatName}}" form="frmHidden"></td>
+                <td>
+                    <button type="button" class="btn btn-primary" onclick="productByCatID({{CatID}})"><i
+                            class="far fa-eye"></i></button>
+                    <button type="button" class="btn btn-success" onclick="updateClick({{CatID}})"><i
+                            class="fas fa-square-check"></i></button>
+                    <button type="button" class="btn btn-danger" onclick="delClick({{CatID}})"><i
+                            class="far fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            {{else}}
+            <tr>
+                <th scope="row" id="catID">{{CatID}}</th>
+                <td id="catName">{{CatName}} </td>
+                <td>
+                    <button type="button" class="btn btn-primary" onclick="productByCatID({{CatID}})"><i
+                            class="far fa-eye"></i></button>
+                    <button type="button" class="btn btn-success" onclick="editClick({{CatID}})"><i
+                            class="fas fa-edit"></i></button>
+                    <button type="button" class="btn btn-danger" onclick="delClick({{CatID}})"><i
+                            class="far fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            {{/if}}
+            {{/each}}
+
+            {{#if add}}
+            <tr>
+                <th scope="row"><input type="text" name="catID" id="catID" form="frmHidden"></td>
+                <td><input type="text" name="catName" id="catName" form="frmHidden"></td>
+                <td>
+                    <button type="button" class="btn btn-success" onclick="insertClick()"><i
+                            class="fas fa-circle-check"></i></button>
+                    <button type="button" class="btn btn-danger" onclick="trashClick()"><i
+                            class="far fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            {{/if}}
+
+            <tr>
+                <th scope="row"></th>
+                <td></td>
+                <td><button type="button" class="btn btn-success" onclick="addClick()"><i
+                            class="fas fa-add"></i></button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<form id="frmHidden" method="POST">
+    <input type="hidden" id="CatID" name="CatID" value="-1">
+    <input type="hidden" id="CatName" name="CatName" value="">
+</form>
+{{#section 'script'}}
+
+<script type="application/javascript">
+
+    function trashClick(){
+        $('#frmHidden').attr('action', '/category/curd');
+        $('#frmHidden').submit();
+    }
+
+    function delClick(id) {
+        $('#CatID').val(id);
+        $('#frmHidden').attr('action', `/category/${id}/delete`);
+        $('#frmHidden').submit();
+    }
+
+    function productByCatID(id) {
+        $('#frmHidden').attr('action', `/category/${id}/product`);
+        $('#frmHidden').submit();
+    }
+
+    function editClick(id) {
+        $('#CatID').val(id);
+        $('#frmHidden').attr('action', `/category/${id}/edit`);
+        $('#frmHidden').submit();
+    }
+
+    function updateClick(id) {
+        $('#frmHidden').attr('action', `/category/${id}/update`);
+        $('#frmHidden').submit();
+    }
+
+    function addClick() {
+        $('#frmHidden').attr('action', '/category/add');
+        $('#frmHidden').submit();
+    }
+
+    function insertClick(){
+         $('#frmHidden').attr('action', '/category/insert');
+        $('#frmHidden').submit();
+    }
+
+</script>
+
+{{/section}}
